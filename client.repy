@@ -1,0 +1,28 @@
+if callfunc == 'initialize':
+  previousRuntime=0
+  count=0
+  try:
+	myFile= open("log1.txt","w")
+  except:
+	print "file cant be opened"
+  while 1:
+    try:
+        #this is comment
+	randomNum = randomfloat()
+	print gethostbyname_ex(randomNum+".zenodotus.poly.edu")	
+    except:
+	# log=5.0 log1=1 log3 with 0.001 log4=0.000000001 		   
+	# log5=0.00000000000000000000000000001
+	sleeptime=1
+	newRuntime= getruntime()
+	if (count==0):
+	  runtime= newRuntime-previousRuntime
+	else:
+	  runtime= newRuntime-previousRuntime-sleeptime	
+	print runtime
+	myFile.write(repr(runtime))
+	myFile.write("\n")
+	previousRuntime= newRuntime
+	count=count+1
+    	sleep(sleeptime)
+		
