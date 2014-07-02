@@ -2,25 +2,19 @@
 # log5=0.00000000000000000000000000001 these are sleep times for corrspndin log files
 
 if callfunc == 'initialize':
-  previous_runtime=0
-  count=0
   myfile= open("log1.txt","w")
   while 1:
     try:
 	random_num = randomfloat()
-	print gethostbyname_ex(randomNum+".zenodotus.poly.edu")		
+	runtime_before_gethost=getruntime()
+	print gethostbyname_ex(str(random_num)+".zenodotus.poly.edu")	
+	
     except:
-	sleeptime=1	#set sleep time to 1 sec
-	new_runtime= getruntime()
-	#response time for each DNS is total runtime that has elapsed minus the elapsed 	#time before DNS request	
-	if (count==0):
-	  runtime= new_runtime-previous_runtime
-	else:
-	  runtime= new_runtime-previous_runtime-sleeptime	
-	print runtime
-	myfile.write(repr(runtime))
+        runtime_after_gethost= getruntime()
+	server_response_time= runtime_after_gethost-runtime_before_gethost
+        print " elapsed time " +str(server_response_time)
+	myfile.write(repr(server_response_time))
 	myfile.write("\n")
-	previous_runtime= new_runtime
-	count=count+1
-    	sleep(sleeptime)
-		
+	sleep(1)
+    		
+
