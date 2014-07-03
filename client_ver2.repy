@@ -1,20 +1,21 @@
-# log=5.0 log1=1 log3=0.001 log4=0.000000001 		   
-# log5=0.00000000000000000000000000001 these are sleep times for corrspndin log files
+""" 
+This program tests the response time of Zenodotus server
+for random non-existent FQDNS with different waiting time.
+"""
 
 if callfunc == 'initialize':
-  myfile= open("log1.txt","w")
-  while 1:
-    try:
-	random_num = randomfloat()
-	runtime_before_gethost=getruntime()
-	print gethostbyname_ex(str(random_num)+".zenodotus.poly.edu")	
-	
-    except:
-        runtime_after_gethost= getruntime()
-	server_response_time= runtime_after_gethost-runtime_before_gethost
-        print " elapsed time " +str(server_response_time)
-	myfile.write(repr(server_response_time))
-	myfile.write("\n")
-	sleep(1)
+    myfile= open("log1.txt","w")
+    while True:
+        try:
+            random_num = randomfloat()
+            runtime_before_gethost=getruntime()
+            gethostbyname_ex(str(random_num)+".zenodotus.poly.edu")	
+        except:
+            runtime_after_gethost = getruntime()
+            server_response_time = runtime_after_gethost-runtime_before_gethost
+            print "elapsed time: " + str(server_response_time)
+            myfile.write(repr(server_response_time))
+            myfile.write("\n")
+            sleep(1)
     		
 
