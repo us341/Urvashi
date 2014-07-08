@@ -4,7 +4,10 @@ for random non-existent FQDNS with different waiting time.
 """
 
 if callfunc == 'initialize':
-    myfile= open("log1.txt","w")
+    myfile= open("log.txt","w")
+    myfile.write("before_server_request          server_response_time")
+    myfile.write("\n")
+    print '%2s %18s' % ("before server_request","response time")
     while True:
         try:
             random_num = randomfloat()
@@ -13,9 +16,9 @@ if callfunc == 'initialize':
         except:
             runtime_after_gethost = getruntime()
             server_response_time = runtime_after_gethost-runtime_before_gethost
-            print "elapsed time: " + str(server_response_time)
-            myfile.write(repr(server_response_time))
+            print '%6f %30f' % (runtime_before_gethost,server_response_time)
+            #print "elapsed time: " + str(server_response_time)
+            myfile.write(repr(runtime_before_gethost)+ "\t\t"+repr(server_response_time))
             myfile.write("\n")
             sleep(1)
     		
-
