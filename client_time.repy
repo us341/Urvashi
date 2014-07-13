@@ -1,0 +1,902 @@
+""" 
+This program tests the response time of Zenodotus server
+for random non-existent FQDNS with different waiting time.
+"""
+#begin include ntp_time.repy
+"""
+   Author: Justin Cappos
+     Edited by Eric Kimbrel, this was originally time.repy 
+
+   Start Date: 8 August 2008
+
+   Description:
+
+   This is an implementation of time_interface.repy
+
+   This module handles getting the time from an external source, via UDP.
+   It gets the remote time once and then uses the offset from the local 
+   clock from then on
+   to return the current time.
+
+   To use this module, first make a call to time_updatetime(localport) with a
+   local UDP port that you have permission to send/recv on. This will
+   contact some random subset of NTP servers to get and store the local time.
+
+   Then, to get the actual time, call time_gettime() which will return
+   the current time (in seconds). time_gettime() can be called at any point
+   after having called time_updatetime(localport) since time_gettime() simply
+   calculates how much time has elapsed since the local time was originally 
+   acquired from one of the NTP servers.
+
+   Note that time_gettime() will raise TimeError if no NTP server responded or
+   if time_updatetime(localport) was never previously called.  If time_gettime()
+   fails, then time_updatetime(localport) can be called again to sample time
+   from another random set of NTP servers.
+"""
+
+
+#begin include time_interface.repy
+"""
+<Program Name>
+  time_interface.repy
+
+<Author>
+  Eric Kimbrel
+
+<Started>
+  Jul 2, 2009
+
+<Purpose>
+  Provide a framework to run any implementation of a ntp time service that
+  follows the interface provided here.
+
+  Any implementation must provide update method that takes a localport 
+  as an argument.
+
+  Implementers will set a mapping to their functions by calling 
+  time_register_method
+
+  USE:
+  
+  To use this module, first make a call to time_updatetime(localport),where
+  localport is a valid UDP port that you can send and receive on (note that
+  this port may not be used depending on the implementation.)
+
+  Then, to get the actual time, call time_gettime() which will return
+  the current time (in seconds).
+
+  time.repy will attempt to use the update method of any impelemntor included.
+  If none are included or if they all fail an exception is thrown
+
+"""
+
+
+# dictionary for time implementers to store their information
+# the settime method is passed in for use by implementers
+TIME_IMP_DICT = {}
+
+time_query_times = []
+
+class TimeError(Exception):
+  pass
+
+
+def time_register_method(imp_name,update_method):
+  """
+  <Purpose>
+  Allow an implementation to register its update method with time.repy
+
+  <Arguments>
+  imp_name, the name or unique abbreviation of the implementation
+  update_method, a time update_method
+  
+  <Exceptions>
+  None
+
+   <Returns>
+   None
+  """
+  TIME_IMP_DICT[imp_name] = update_method
+
+
+
+
+def time_updatetime(localport):
+  """
+   <Purpose>
+    Obtains and stores the local time from a subset of NTP servers.
+    Attempts to update the time with each implementation provided
+    until one succeeds or they all fail
+
+   <Arguments>
+    localport:
+             The local port that MAY be used when contacting the NTP server(s).
+             Consider this port a hint and not a rule.
+   
+   <Exceptions>
+    Exception occurs when all methods fail to updatetime, or no such methods 
+    are provided (no mehtods have registered)
+
+   <Side Effects>
+    time_settime(currenttime) is called as the sub process of a sub process,
+    which adjusts the current time.
+
+   <Returns>
+    None.
+  """
+  exception_list = []
+  # try the 'update' function for each implementation, storing exceptions in
+  # case of total failure, and exiting the function when any of the 'update'
+  # functions succeed.
+  for update in TIME_IMP_DICT:
+    try:
+      TIME_IMP_DICT[update](localport)
+    except Exception, e:
+      exception_list.append(e)
+    else:
+      return  # exit when we succeed
+
+  # we failed
+  ex_str =''
+  for ex in exception_list:
+    ex_str+=str(ex)
+  ex_str = 'ERROR: failed to update ntp time, '+ex_str
+  raise Exception(ex_str)
+
+
+
+
+
+def time_settime(currenttime):
+  """
+   <Purpose>
+    Sets a remote time as the current time.
+
+   <Arguments>
+    currenttime:
+               The remote time to be set as the current time.
+
+   <Exceptions>
+    None.
+
+   <Side Effects>
+    Adjusts the current time.
+
+   <Returns>
+    None.
+  """
+
+  time_query_times.append((getruntime(), currenttime))
+
+
+
+
+
+
+def time_gettime():
+  """
+   <Purpose>
+    Gives the current time in seconds by calculating how much time has elapsed
+    since the local time was obtained from an NTP server via the
+    time_updatetime(localport) function.
+
+   <Arguments>
+    None.
+
+   <Exceptions>
+    TimeError when time_updatetime(localport)has not previously been called or 
+    when time_updatetime(localport) has any unresolved TimeError exceptions.
+
+   <Side Effects>
+    None.
+
+   <Returns>
+    Current time in seconds.
+  """
+
+  if time_query_times == []:
+    raise TimeError, "TimeError: time_query_times is an empty list because it has not been set."
+
+  # otherwise use the most recent data...
+  latest_update = time_query_times[-1]
+
+  # first item is the getruntime(), second is NTP time...
+  elapsedtimesinceupdate = getruntime() - latest_update[0]
+
+  return latest_update[1] + elapsedtimesinceupdate
+
+
+
+# in case you want to change to time since the 1970 (as is common)
+time_seconds_from_1900_to_1970 = 2208988800
+
+
+
+
+#end include time_interface.repy
+
+# Use for random sampling...
+#begin include random.repy
+""" 
+<Program Name>
+  random.repy
+
+<Author>
+  Justin Cappos: random_sample
+
+  Modified by Anthony Honstain
+    random_nbit_int and random_long_to_bytes is modified from 
+    Python Cryptography Toolkit and was part of pycrypto which 
+    is maintained by Dwayne C. Litzenberger
+    
+    random_range, random_randint, and random_int_below are modified 
+    from the Python 2.6.1 random.py module. Which was:
+    Translated by Guido van Rossum from C source provided by
+    Adrian Baddeley.  Adapted by Raymond Hettinger for use with
+    the Mersenne Twister  and os.urandom() core generators.  
+
+<Purpose>
+  Random routines (similar to random module in Python)
+  
+  
+<Updates needed when emulmisc.py adds randombytes function>
+  TODO-
+    random_nbit_int currently uses random_randombytes as a source 
+    of random bytes, this is not a permanent fix (the extraction 
+    of random bytes from the float is not portable). The change will
+    likely be made to random_randombytes (since calls os.urandom will
+    likely be restricted to a limited number of bytes).  
+  TODO - 
+    random_randombytes will remained but serve as a helper function
+    to collect the required number of bytes. Calls to randombytes
+    will be restricted to a set number of bytes at a time, since
+    allowing an arbitrary request to os.urandom would circumvent 
+    performance restrictions. 
+  TODO - 
+    _random_long_to_bytes will no longer be needed.  
+      
+"""
+
+#begin include math.repy
+""" Justin Cappos -- substitute for a few python math routines"""
+
+def math_ceil(x):
+  xint = int(x)
+  
+  # if x is positive and not equal to itself truncated then we should add 1
+  if x > 0 and x != xint:
+    xint = xint + 1
+
+  # I return a float because math.ceil does
+  return float(xint)
+
+
+
+def math_floor(x):
+  xint = int(x)
+  
+  # if x is negative and not equal to itself truncated then we should subtract 1
+  if x < 0 and x != xint:
+    xint = xint - 1
+
+  # I return a float because math.ceil does
+  return float(xint)
+
+
+
+math_e = 2.7182818284590451
+math_pi = 3.1415926535897931
+
+# Algorithm from logN.py on
+# http://en.literateprograms.org/Logarithm_Function_(Python)#chunk
+# MIT license
+#
+# hmm, math_log(4.5,4)      == 1.0849625007211561
+# Python's math.log(4.5,4)  == 1.0849625007211563
+# I'll assume this is okay.
+def math_log(X, base=math_e, epsilon=1e-16):
+  # JMC: The domain of the log function is {n | n > 0)
+  if X <= 0:
+    raise ValueError, "log function domain error"
+
+  # log is logarithm function with the default base of e
+  integer = 0
+  if X < 1 and base < 1:
+    # BUG: the cmath implementation can handle smaller numbers...
+    raise ValueError, "math domain error"
+  while X < 1:
+    integer -= 1
+    X *= base
+  while X >= base:
+    integer += 1
+    X /= base
+  partial = 0.5               # partial = 1/2 
+  X *= X                      # We perform a squaring
+  decimal = 0.0
+  while partial > epsilon:
+    if X >= base:             # If X >= base then a_k is 1 
+      decimal += partial      # Insert partial to the front of the list
+      X = X / base            # Since a_k is 1, we divide the number by the base
+    partial *= 0.5            # partial = partial / 2
+    X *= X                    # We perform the squaring again
+  return (integer + decimal)
+
+
+#end include math.repy
+
+def random_randombytes(num_bytes, random_float=None):
+  """
+   <Purpose>
+     Return a string of length num_bytes, made of random bytes 
+     suitable for cryptographic use (because randomfloat draws
+     from a os provided random source).
+      
+     *WARNING* If python implements float as a C single precision
+     floating point number instead of a double precision then
+     there will not be 53 bits of data in the coefficient.
+
+   <Arguments>
+     num_bytes:
+               The number of bytes to request from os.urandom. 
+               Must be a positive integer value.
+     random_float:
+                  Should not be used, available only for testing
+                  so that predetermined floats can be provided.
+    
+   <Exceptions>
+     None
+
+   <Side Effects>
+     This function results in one or more calls to randomfloat 
+     which uses a OS source of random data which is metered.
+
+   <Returns>
+     A string of num_bytes random bytes suitable for cryptographic use.
+  """
+  # To ensure accurate testing, this allows the source
+  # of random floats to be supplied.
+  if random_float is None: 
+    random_float = randomfloat()
+  
+  randombytes = ''
+  
+  # num_bytes/6 + 1 is used because at most a single float
+  # can only result in 6 bytes of random data. So an additional
+  # 6 bytes is added and them trimmed to the desired size.
+  for byte in range(num_bytes/6 + 1):
+    
+    # Convert the float back to a integer by multiplying
+    # it by 2**53, 53 is used because the expected precision
+    # of a python float will be a C type double with a 53 bit 
+    # coefficient, this will still depend on the implementation
+    # but the standard is to expect 53 bits.
+    randomint = int(random_float * (2**53)) 
+    # 53 bits trimmed down to 48bits
+    # and 48bits is equal to 6 bytes
+    randomint = randomint >> 5  
+    
+    # Transform the randomint into a byte string, 6 bytes were
+    # used to create this integer, but several of the leading 
+    # bytes could have been trimmed off in the process.
+    sixbytes = _random_long_to_bytes(randomint)
+    
+    # Add on the zeroes that should be there.
+    if len(sixbytes) < 6: 
+      # pad additions binary zeroes that were lost during 
+      # the floats creation.
+      sixbytes = '\x00'*(6-len(sixbytes)) + sixbytes 
+    randombytes += sixbytes
+  
+  return randombytes[6 - num_bytes % 6:]
+  
+  
+  
+def _random_long_to_bytes(long_int):
+  """
+  <Purpose>
+    Convert a long integer to a byte string.   
+    Used by random_randombytes to convert integers recovered
+    from random floats into its byte representation.
+    Used by random_randombytes, random_randombytes is responsible
+    for padding any required binary zeroes that are lost in the
+    conversion process.     
+  """
+
+  long_int = long(long_int)
+  byte_string = ''
+  temp_int = 0
+  
+  # Special case to ensure that a non-empty string
+  # is always returned.
+  if long_int == 0:
+    return '\000'
+  
+  while long_int > 0:
+    # Use a bitwise AND to get the last 8 bits from the long.
+    #    long_int  -->   1010... 010000001 (base 2)
+    #    0xFF      -->            11111111
+    #              _______________________
+    #  Bitwise AND result -->     10000001
+    tmp_int = long_int & 0xFF
+    # Place the new character at the front of the string.
+    byte_string = "%s%s" % (chr(tmp_int), byte_string)
+    # Bitshift the long because the trailing 8 bits have just been read.
+    long_int = long_int >> 8
+      
+  return byte_string
+
+
+
+def random_nbit_int(num_bits):  
+  """
+  <Purpose>
+    Returns an random integer that was constructed with
+    num_bits many random bits. The result will be an
+    integer [0, 2**(num_bits) - 1] inclusive.
+     
+    For Example:
+     If a 10bit number is needed, random_nbit_int(10).
+     Min should be greater or equal to 0
+     Max should be less than or equal to 1023
+
+    TODO-
+      This function currently uses random_randombytes as a source 
+      of random bytes, this is not a permanent fix (the extraction 
+      of random bytes from the float is not portable). The change will
+      likely be made to random_randombytes (since calls os.urandom will
+      likely be restricted to a limited number of bytes).
+
+  <Arguments>
+    num_bits:
+             The number of random bits to be used for construction
+             of the random integer to be returned.
+
+  <Exceptions>
+    TypeError if non-integer values for num_bits.
+      Will accept floats of the type 1.0, 2.0, ...
+    
+    ValueError if the num_bits is negative or 0.
+
+  <Side Effects>
+    This function results in one or more calls to randomfloat 
+    which uses a OS source of random data which is metered.
+
+  <Returns>
+    Returns a random integer between [0, 2**(num_bits) - 1] inclusive.
+  
+  <Walkthrough of functions operation>
+    This will be a step by step walk through of the key operations
+    defined in this function, with the largest possible
+    10 bit integer returned.
+    
+    num_bits = 10
+    
+    randstring = random_randombytes(10/8)  for our example we
+    will suppose that the byte returned was '\xff' (which is the
+    same as chr(255)).
+    
+    odd_bits = 10 % 8 = 2
+    Once again we assume that random_randombytes(1) returns the
+    maximum possible, which is '\xff'  
+    chr = ord('\xff') >> (8 - odd_bits)
+    -> chr = 255 >> (8 - 2)
+    -> chr = 255 >> 6 = 3   Note 3 is the largest 2 bit number
+    chr(3) is appended to randstring resulting in
+    randstring = '\x03\xff' 
+    
+    value = 0
+    length = 2
+    
+    STEP 1 (i = 0):
+      value = value << 8 
+      -> value = 0
+      value = value + ord(randstring[0])
+      -> value = 3
+    
+    STEP 2 (i = 1):
+      value = value << 8
+      -> value = 768
+      value = value + ord(randstring[1])
+      -> value = 1023
+    
+    return 1023
+    This is the maximum possible 10 bit integer.
+  """
+  if num_bits <= 0:
+    raise ValueError('number of bits must be greater than zero')
+  if num_bits != int(num_bits):
+    raise TypeError('number of bits should be an integer')
+  
+  # The number of bits requested may not be a multiple of
+  # 8, then an additional byte will trimmed down.
+  randstring = random_randombytes(num_bits/8)
+
+  odd_bits = num_bits % 8
+  # A single random byte be converted to an integer (which will
+  # be an element of [0,255]) it will then be shifted to the required
+  # number of bits.
+  # Example: if odd_bits = 3, then the 8 bit retrieved from the 
+  # single byte will be shifted right by 5.
+  if odd_bits != 0:
+    char = ord(random_randombytes(1)) >> (8 - odd_bits)
+    randstring = chr(char) + randstring
+  
+  # the random bytes in randstring will be read from left to right
+  result = 0L
+  length = len(randstring)
+  for i in range(0, length):
+    # While result = 0, the bitshift left will still result in 0
+    # Since we are dealing with integers, this does not result
+    # in the loss of any information.
+    result = (result << 8) 
+    result = result + ord(randstring[i]) 
+  
+  assert(result < (2 ** num_bits))
+  assert(result >= 0)
+
+  return result
+
+
+
+def random_int_below(upper_bound):
+  """
+  <Purpose>
+    Returns an random integer in the range [0,upper_bound)
+    
+    Handles the case where upper_bound has more bits than returned
+    by a single call to the underlying generator.
+     
+    For Example:
+     For a 10bit number, random_int_below(10).
+     results would be an element in of the set 0,1,2,..,9.
+     
+    NOTE: This function is a port from the random.py file in 
+    python 2.6.2. For large numbers I have experienced inconsistencies
+    when using a naive logarithm function to determine the
+    size of a number in bits.  
+
+  <Arguments>
+    upper_bound:
+           The random integer returned will be in [0, upper_bound).
+           Results will be integers less than this argument.
+
+  <Exceptions>
+    TypeError if non-integer values for upper_bound.
+    ValueError if the upper_bound is negative or 0.
+
+  <Side Effects>
+    This function results in one or more calls to randomfloat 
+    which uses a OS source of random data which is metered.
+
+  <Returns>
+    Returns a random integer between [0, upper_bound).
+  
+  """
+  
+  try:
+    upper_bound = int(upper_bound)
+  except ValueError:
+    raise TypeError('number should be an integer')
+  
+  if upper_bound <= 0:
+    raise ValueError('number must be greater than zero')
+  
+    
+  # If upper_bound == 1, the math_log call will loop infinitely.
+  # The only int in [0, 1) is 0 anyway, so return 0 here.
+  # Resolves bug #927
+  if upper_bound == 1:
+    return 0
+  
+  k = int(1.00001 + math_log(upper_bound - 1, 2.0))   # 2**k > n-1 > 2**(k-2)
+  r = random_nbit_int(k)
+  while r >= upper_bound:
+    r = random_nbit_int(k)
+  return r
+
+ 
+
+def random_randrange(start, stop=None, step=1):
+  """
+  <Purpose>
+    Choose a random item from range(start, stop[, step]).
+    
+  <Arguments>
+    start:
+      The random integer returned will be greater than
+      or equal to start. 
+  
+    stop:
+      The random integer returned will be less than stop.
+      Results will be integers less than this argument.
+
+    step:
+      Determines which elements from the range will be considered.
+     
+  <Exceptions>
+    ValueError:
+      Non-integer for start or stop argument
+      Empty range, if start < 0 and stop is None
+      Empty range
+      Zero or non-integer step for range
+
+  <Side Effects>
+    This function results in one or more calls to randomfloat 
+    which uses a OS source of randomdata which is metered.
+  
+  <Returns>
+    Random item from (start, stop[, step]) 'exclusive'
+    
+  <Notes on port>
+    This fixes the problem with randint() which includes the
+    endpoint; in Python this is usually not what you want.
+    
+    Anthony -I removed these since they do not apply
+      int=int, default=None, maxwidth=1L<<BPF
+      Do not supply the 'int', 'default', and 'maxwidth' arguments.
+  """
+  maxwidth = 1L<<53
+
+  # This code is a bit messy to make it fast for the
+  # common case while still doing adequate error checking.
+  istart = int(start)
+  if istart != start:
+    raise ValueError, "non-integer arg 1 for randrange()"
+  if stop is None:
+    if istart > 0:
+      if istart >= maxwidth:
+        return random_int_below(istart)
+      return int(randomfloat() * istart)
+    raise ValueError, "empty range for randrange()"
+
+  # stop argument supplied.
+  istop = int(stop)
+  if istop != stop:
+    raise ValueError, "non-integer stop for randrange()"
+  width = istop - istart
+  if step == 1 and width > 0:
+    # Note that
+    #     int(istart + self.random()*width)
+    # instead would be incorrect.  For example, consider istart
+    # = -2 and istop = 0.  Then the guts would be in
+    # -2.0 to 0.0 exclusive on both ends (ignoring that random()
+    # might return 0.0), and because int() truncates toward 0, the
+    # final result would be -1 or 0 (instead of -2 or -1).
+    #     istart + int(self.random()*width)
+    # would also be incorrect, for a subtler reason:  the RHS
+    # can return a long, and then randrange() would also return
+    # a long, but we're supposed to return an int (for backward
+    # compatibility).
+
+    if width >= maxwidth:
+      return int(istart + random_int_below(width))
+    return int(istart + int(randomfloat()*width))
+  if step == 1:
+    raise ValueError, "empty range for randrange() (%d,%d, %d)" % (istart, istop, width)
+
+  # Non-unit step argument supplied.
+  istep = int(step)
+  if istep != step:
+    raise ValueError, "non-integer step for randrange()"
+  if istep > 0:
+    n = (width + istep - 1) // istep
+  elif istep < 0:
+    n = (width + istep + 1) // istep
+  else:
+    raise ValueError, "zero step for randrange()"
+
+  if n <= 0:
+    raise ValueError, "empty range for randrange()"
+
+  if n >= maxwidth:
+    return istart + istep*random_int_below(n)
+  return istart + istep*int(randomfloat() * n)
+
+
+
+def random_randint(lower_bound, upper_bound):
+  """
+  <Purpose>
+    Return random integer in range [lower_bound, upper_bound], 
+    including both end points.
+    
+  <Arguments>
+    upper_bound:
+      The random integer returned will be less than upper_bound.
+    lower_bound:
+      The random integer returned will be greater than
+      or equal to the lower_bound.
+
+  <Exceptions>
+    None
+
+  <Side Effects>
+    This function results in one or more calls to randomfloat 
+    which uses a OS source of randomdata which is metered.
+  
+  <Returns>
+    Random integer from [lower_bound, upper_bound] 'inclusive'  
+  """
+  return random_randrange(lower_bound, upper_bound+1)
+
+
+
+def random_sample(population, k):
+  """
+  <Purpose>
+    To return a list containing a random sample from the population.
+    
+  <Arguments>
+    population:
+               The elements to be sampled from.
+    k: 
+      The number of elements to sample
+      
+  <Exceptions>
+    ValueError is sampler larger than population.
+    
+  <Side Effects>
+    This function results in one or more calls to randomfloat 
+    which uses a OS source of randomdata which is metered.
+    
+  <Returns>
+    A list of len(k) with random elements from the population.
+    
+  """
+  
+  newpopulation = population[:]
+  if len(population) < k:
+    raise ValueError, "sample larger than population"
+
+  retlist = []
+  populationsize = len(population)-1
+
+  for num in range(k):
+    pos = random_randint(0,populationsize-num)
+    retlist.append(newpopulation[pos])
+    del newpopulation[pos]
+
+  return retlist
+
+#end include random.repy
+
+
+
+
+
+
+
+#BUG: Do I need to compensate for the time taken to contact the time server?    (#353)
+def ntp_time_updatetime(localport):
+  """
+   <Purpose>
+    Obtains and stores the local time from a subset of NTP servers.
+
+   <Arguments>
+    localport:
+             The local port to be used when contacting the NTP server(s).
+
+   <Exceptions>
+    TimeError when getmyip() fails or one of the subset of NTP servers will not
+    respond.
+
+   <Side Effects>
+    time_settime(currenttime) is called as the subprocess of a subprocess, which
+    adjusts the current time.
+
+   <Returns>
+    None.
+  """
+
+  try:
+    ip = getmyip()
+  except Exception, e:
+    raise TimeError, str(e)
+
+  timeservers = ["time-a.nist.gov", "time-b.nist.gov", "time-a.timefreq.bldrdoc.gov", "time-b.timefreq.bldrdoc.gov", "time-c.timefreq.bldrdoc.gov", "utcnist.colorado.edu", "time.nist.gov", "time-nw.nist.gov", "nist1.symmetricom.com", "nist1.aol-ca.symmetricom.com", "nist1.aol-va.symmetricom.com", "nist.expertsmi.com", "nist.netservicesgroup.com"]
+
+  listenhandle = recvmess(ip,localport, _time_decode_NTP_packet)
+  mycontext['ntp_time_got_time'] = False
+
+  # I'm going to get the time from up to 5 sources and then use the median
+  mycontext['ntp_time_received_times'] = []
+
+  # always close the handle before returning...
+  try: 
+    # try five random servers times...
+    for servername in random_sample(timeservers,5):
+
+      # this sends a request, version 3 in "client mode"
+      ntp_request_string = chr(27)+chr(0)*47
+      try: 
+        sendmess(servername,123, ntp_request_string, ip, localport) # 123 is the NTP port
+      except Exception:
+        # most likely a lookup error...
+        continue
+
+    # wait for 5 seconds for a response before retrying
+    for junkiterations in range(10):
+      sleep(.5)
+
+      if mycontext['ntp_time_got_time']:
+        # If we've had a response, we sleep one second, choose the time,
+        # and then quit
+        sleep(1)
+
+        # set the time...
+        _time_choose_NTP_time_to_settime()
+
+        # clean-up and return
+        stopcomm(listenhandle)
+        return
+    
+    
+  finally:
+    stopcomm(listenhandle)
+
+  # Failure, tried servers without luck...
+  raise TimeError, "Time Server update failed.  Perhaps retry later..."
+
+
+
+# We're choosing from a list of times to avoid problems like that in #879
+def _time_choose_NTP_time_to_settime():
+  timelist = mycontext['ntp_time_received_times'][:]
+
+  # this may happen if there are concurrent calls to update the time.
+  assert(len(timelist)>0)
+  
+  timelist.sort()
+  
+  # it's better to be slightly high than slightly low...  I'll set the time
+  # to be the middle element or if there is a tie, I'll choose the bigger 
+  # 'middle' element.   That means [1,2,3] would set 2, but [1,2,3,4] would
+  # set 3.   I can get this by integer division by 2...
+
+  time_settime(timelist[len(timelist) / 2])
+  
+
+
+
+### Do the conversion / decoding for NTP.   More details about the 
+### format of NTP are at RFC 2030 (http://www.ietf.org/rfc/rfc2030.txt)
+
+# this unpacks the data from the packet and changes it to a float
+def _time_convert_timestamp_to_float(timestamp):
+  integerpart = (ord(timestamp[0])<<24) + (ord(timestamp[1])<<16) + (ord(timestamp[2])<<8) + (ord(timestamp[3]))
+  floatpart = (ord(timestamp[4])<<24) + (ord(timestamp[5])<<16) + (ord(timestamp[6])<<8) + (ord(timestamp[7]))
+  return integerpart + floatpart / float(2**32)
+
+
+def _time_decode_NTP_packet(ip, port, mess, ch):
+  # I got a time response packet.   Remember it and notify that I got it.
+  mycontext['ntp_time_received_times'].append(_time_convert_timestamp_to_float(mess[40:48]))
+  mycontext['ntp_time_got_time'] = True
+
+
+#register the update method
+time_register_method('ntp',ntp_time_updatetime)
+#end include ntp_time.repy
+
+if callfunc == 'initialize':
+    myfile= open("log.txt","w")
+    myfile.write("timestamp_before		timestamp_after       		server_response_time")
+    myfile.write("\n")
+    print '%2s %24s %30s' % ("timestamp_before","timestamp_after ", " reponse_time")
+    while True:
+        try:
+            random_num = randomfloat()
+            time_updatetime(12345)
+            timestamp_before = time_gettime()
+            gethostbyname_ex(str(random_num)+".zenodotus.poly.edu")	
+        except:
+            timestamp_after=time_gettime()
+            time_in_sec_after_1970_before_call = timestamp_before - time_seconds_from_1900_to_1970
+            time_in_sec_after_1970_after_call = timestamp_after - time_seconds_from_1900_to_1970
+            server_response_time = time_in_sec_after_1970_after_call - time_in_sec_after_1970_before_call
+            print '%6f %24f %28f ' % (time_in_sec_after_1970_before_call, time_in_sec_after_1970_after_call,server_response_time)
+            myfile.write(repr(timestamp_before)+"\t\t"+repr(timestamp_after)+ "\t\t"+repr(server_response_time))
+            myfile.write("\n")
+            sleep(1)
+    		
+
