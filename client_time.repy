@@ -885,17 +885,18 @@ if callfunc == 'initialize':
     print '%2s %24s %30s' % ("timestamp_before","timestamp_after ", " reponse_time")
     while True:
         try:
-            random_num = randomfloat()
+            random_string = str(randomfloat())
+            new_string = random_string[2:]
             time_updatetime(12345)
             timestamp_before = time_gettime()
-            gethostbyname_ex(str(random_num)+".zenodotus.poly.edu")	
+            gethostbyname_ex(new_string +".zenodotus.poly.edu")	
         except:
             timestamp_after=time_gettime()
             time_in_sec_after_1970_before_call = timestamp_before - time_seconds_from_1900_to_1970
             time_in_sec_after_1970_after_call = timestamp_after - time_seconds_from_1900_to_1970
             server_response_time = time_in_sec_after_1970_after_call - time_in_sec_after_1970_before_call
             print '%6f %24f %28f ' % (time_in_sec_after_1970_before_call, time_in_sec_after_1970_after_call,server_response_time)
-            myfile.write(repr(timestamp_before)+"\t\t"+repr(timestamp_after)+ "\t\t"+repr(server_response_time))
+            myfile.write(repr(time_in_sec_after_1970_before_call)+"\t\t"+repr(time_in_sec_after_1970_after_call)+ "\t\t"+repr(server_response_time))
             myfile.write("\n")
             sleep(1)
     		
