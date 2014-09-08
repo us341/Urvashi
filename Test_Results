@@ -1,0 +1,556 @@
+Test results:
+Module:- Overlord
+Comment: Nothing happened when i ran the utf.py file
+sandeepermasmbp:test_target sandeepverma$ python utf.py -a
+sandeepermasmbp:test_target sandeepverma$ 
+
+
+Module:- experimentmanager
+Comment: Nothing happened when i ran the utf.py file
+sandeepermasmbp:test_target sandeepverma$ python utf.py -a
+sandeepermasmbp:test_target sandeepverma$ ls
+
+Module:- clearinghouse
+python utf.py -a 
+Testing module: seattlelib
+	Running: ut_seattlelib_advertisepipe_works.r2py             [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+Internal Error
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 886, in sendmessage
+
+User traceback:
+
+Exception (with class 'socket.error'): [Errno 1] Operation not permitted
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_seattlelib_centralizeadvertise.py               [ PASS ]
+	Running: ut_seattlelib_centralizeadvertise_v2.py            [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+Traceback (most recent call last):
+  File "ut_seattlelib_centralizeadvertise_v2.py", line 19, in <module>
+    v2centralizedadvertise_announce("test", "234389459", 10)
+  File "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/centralizedadvertise_v2.r2py", line 79, in v2centralizedadvertise_announce
+    session.session_sendmessage(sockobj, datastringtosend)
+  File "sockettimeout.r2py", line 301, in timeout_openconnection
+    break
+  File "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1304, in openconnection
+    sock = _timed_conn_initialize(localip,localport,destip,destport, timeout)
+  File "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1159, in _timed_conn_initialize
+    raise ConnectionRefusedError("The connection was refused!") 
+exception_hierarchy.ConnectionRefusedError: The connection was refused!
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_seattlelib_dylink_catch_nestedimport_exception.r2py [ PASS ]
+	Running: ut_seattlelib_dylinkcircularimport1.r2py           [ PASS ]
+	Running: ut_seattlelib_dylinkcircularimport2.r2py           [ PASS ]
+	Running: ut_seattlelib_dylinkcircularimportsymbols1.r2py    [ PASS ]
+	Running: ut_seattlelib_dylinkcircularimportsymbols2.r2py    [ PASS ]
+	Running: ut_seattlelib_dylinkdispatch.r2py                  [ PASS ]
+	Running: ut_seattlelib_dylinkimportmodule.r2py              [ PASS ]
+	Running: ut_seattlelib_dylinkimportmodulesymbols.r2py       [ PASS ]
+	Running: ut_seattlelib_dylinkoverwritesymbols.r2py          [ PASS ]
+	Running: ut_seattlelib_dylinkpythonfromximport.py           [ PASS ]
+	Running: ut_seattlelib_dylinkpythonimport.py                [ PASS ]
+	Running: ut_seattlelib_dylinkrepyportabilityimportmodule.py [ PASS ]
+	Running: ut_seattlelib_dylinkrepyportabilityimportmodulesymbols.py [ FAIL ]
+--------------------------------------------------------------------------------
+Standard out :
+..............................Produced..............................
+Unexpected contents in variable: local override (expected examplelib-repy.r2py's foo)
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_seattlelib_dylinkrespectsfileextensions.r2py    [ PASS ]
+	Running: ut_seattlelib_dylinkselfimport.r2py                [ PASS ]
+	Running: ut_seattlelib_dylinksimple.r2py                    [ PASS ]
+	Running: ut_seattlelib_dylinksimplepython.py                [ PASS ]
+	Running: ut_seattlelib_dylinktestlib1.r2py                  [ PASS ]
+	Running: ut_seattlelib_dylinktestlib2.r2py                  [ PASS ]
+	Running: ut_seattlelib_ntptime.py                           [ PASS ]
+	Running: ut_seattlelib_parallelize_finishes.py              [ PASS ]
+	Running: ut_seattlelib_session.r2py                         [ PASS ]
+	Running: ut_seattlelib_sockettimeout.py                     [ PASS ]
+	Running: ut_seattlelib_tcptime.py                           [ FAIL ]
+--------------------------------------------------------------------------------
+Standard out :
+..............................Produced..............................
+[FAILED]: TCP time failed for following reason: time_updatetime called before time_register_method!
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_seattlelib_time_interface_updatetime_before_registermethod.r2py [ PASS ]
+	Running: ut_seattlelib_udpcentralizeadvertise.py            [ PASS ]
+Testing module: repyv2api
+	Running: ut_repyv2api_connectionduplicateclose.py           [ PASS ]
+	Running: ut_repyv2api_connectionrecvlocalclose.py           [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_connectionrecvlocalclose.py", line 17, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_connectionrecvlocalclose.py", line 17, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_connectionrecvremoteclose.py          [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_connectionrecvremoteclose.py", line 17, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_connectionrecvremoteclose.py", line 17, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_connectionrecvwouldblock.py           [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_connectionrecvwouldblock.py", line 16, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_connectionrecvwouldblock.py", line 16, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_connectionsendlocalclose.py           [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_connectionsendlocalclose.py", line 17, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_connectionsendlocalclose.py", line 17, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_connectionsendremoteclose.py          [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_connectionsendremoteclose.py", line 17, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_connectionsendremoteclose.py", line 17, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_connectionsendwilleventuallyblock.py  [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_connectionsendwilleventuallyblock.py", line 17, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_connectionsendwilleventuallyblock.py", line 17, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_connectionsendwillnotblock.py         [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_connectionsendwillnotblock.py", line 16, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_connectionsendwillnotblock.py", line 16, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_connectionserversendblocks.py         [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_connectionserversendblocks.py", line 17, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_connectionserversendblocks.py", line 17, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_createlockblocks.py                   [ PASS ]
+	Running: ut_repyv2api_createlocknonblocking.py              [ PASS ]
+	Running: ut_repyv2api_createthreadhasresourcecontrols.py    [ PASS ]
+	Running: ut_repyv2api_createthreadissane.py                 [ PASS ]
+	Running: ut_repyv2api_exitallstopsanotherthread.py          [ PASS ]
+	Running: ut_repyv2api_exitallstopscurrentthread.py          [ PASS ]
+	Running: ut_repyv2api_filecloseconcurrecy.py                [ PASS ]
+	Running: ut_repyv2api_fileclosemakesothercallsfail.py       [ PASS ]
+	Running: ut_repyv2api_fileclosereleasesresource.py          [ PASS ]
+	Running: ut_repyv2api_filereadatbasictest.py                [ PASS ]
+	Running: ut_repyv2api_filereadatpastendoffile.py            [ PASS ]
+	Running: ut_repyv2api_filereadatperformsresourceaccounting.py [ PASS ]
+	Running: ut_repyv2api_filereadatsanitychecksargs.py         [ PASS ]
+	Running: ut_repyv2api_filewriteatbasictest.py               [ PASS ]
+	Running: ut_repyv2api_filewriteatperformsresourceaccounting.py [ PASS ]
+	Running: ut_repyv2api_filewriteatsanitychecksargs.py        [ PASS ]
+	Running: ut_repyv2api_getlasterrorworks.py                  [ PASS ]
+	Running: ut_repyv2api_getresourcedataisvalid.py             [ PASS ]
+	Running: ut_repyv2api_getthreadnamebasictest.py             [ PASS ]
+	Running: ut_repyv2api_initialusevaluesaresane.py            [ FAIL ]
+--------------------------------------------------------------------------------
+Standard out :
+..............................Produced..............................
+Initial Memory Usage is unreasonably low! Expect at least 4MB, using: 3846144 
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_listencloselisten.py                  [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_listencloselisten.py", line 19, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_listencloselisten.py", line 19, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_listencloselisten2.py                 [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_listencloselisten2.py", line 19, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_listencloselisten2.py", line 19, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_listenclosesend.py                    [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_listenclosesend.py", line 17, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_listenclosesend.py", line 17, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_listenforconn-addrbinding.py          [ PASS ]
+	Running: ut_repyv2api_listenforconn-args.py                 [ PASS ]
+	Running: ut_repyv2api_listenforconn-badport.py              [ PASS ]
+	Running: ut_repyv2api_listenforconn-cleanup.py              [ PASS ]
+	Running: ut_repyv2api_listenforconn-dup.py                  [ PASS ]
+	Running: ut_repyv2api_listenforconn-resources.py            [ PASS ]
+	Running: ut_repyv2api_listfilesbasictest.py                 [ PASS ]
+	Running: ut_repyv2api_listfilesperformsresourceaccounting.py [ PASS ]
+	Running: ut_repyv2api_multipleopenconnections.py            [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_multipleopenconnections.py", line 18, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_multipleopenconnections.py", line 18, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_multipleopenconnections2.py           [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_multipleopenconnections2.py", line 19, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_multipleopenconnections2.py", line 19, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_nannyupdatesresourceconsumption.py    [ PASS ]
+	Running: ut_repyv2api_openconnectionalreadyalistening.py    [ PASS ]
+	Running: ut_repyv2api_openconnectionduplicatetuple.py       [ FAIL ]
+--------------------------------------------------------------------------------
+Standard error :
+..............................Produced..............................
+---
+Uncaught exception!
+---
+Following is a full traceback, and a user traceback.
+The user traceback excludes non-user modules. The most recent call is displayed last.
+
+Full debugging traceback:
+  "repy.py", line 154, in execute_namespace_until_completion
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/virtual_namespace.py", line 117, in evaluate
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/safe.py", line 588, in safe_run
+  "ut_repyv2api_openconnectionduplicatetuple.py", line 16, in <module>
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/namespace.py", line 1207, in wrapped_function
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1316, in openconnection
+  "/Users/sandeepverma/Desktop/seattle_project/test_build/clearinghouse/scripts/test_target/emulcomm.py", line 1104, in _conn_cleanup_check
+
+User traceback:
+  "ut_repyv2api_openconnectionduplicatetuple.py", line 16, in <module>
+
+Exception (with class 'exception_hierarchy.CleanupInProgressError'): The socket is being cleaned up by the operating system!
+---
+
+..............................Expected..............................
+None
+--------------------------------------------------------------------------------
+	Running: ut_repyv2api_openconnectionfailswithoutlisten.py   [ PASS ]
+	Running: ut_repyv2api_openconnectionresourceforbidden.py    [ PASS ]
+	Running: ut_repyv2api_openconnectionsanitychecksargs.py     [ PASS ]
+	Running: ut_repyv2api_openconnectiontimeout.py              [ PASS ]
+	Running: ut_repyv2api_openconnectionwithbadlocalip.py       [ PASS ]
+	Running: ut_repyv2api_openfileconsumesfilehandles.py        [ PASS ]
+	Running: ut_repyv2api_openfileduplicatefilefails.py         [ PASS ]
+	Running: ut_repyv2api_openfileperformsresourceaccounting.py [ PASS ]
+	Running: ut_repyv2api_openfilesanitychecksargs.py           [ PASS ]
+	Running: ut_repyv2api_randombytesisresourcelimited.py       [ PASS ]
+	Running: ut_repyv2api_randombytesissane.py                  [ PASS ]
+	Running: ut_repyv2api_removefileissane.py                   [ PASS ]
+	Running: ut_repyv2api_removefileperformsresourceaccounting.py [ PASS ]
+	Running: ut_repyv2api_sendmessage5ktest.py                  [ PASS ]
+	Running: ut_repyv2api_sendmessagebasictest.py               [ PASS ]
+	Running: ut_repyv2api_sendmessagecheckstypes.py             [ PASS ]
+	Running: ut_repyv2api_sleepbasictest.py                     [ PASS ]
+	Running: ut_repyv2api_stoptimesaresane.py                   [ PASS ]
+	Running: ut_repyv2api_tcpserver_wouldblock.py               [ PASS ]
+	Running: ut_repyv2api_typetypeisblocked.py                  [ PASS ]
+	Running: ut_repyv2api_unicodedisallowed.py                  [ PASS ]
+	Running: ut_repyv2api_virtualnamespace-eval.py              [ PASS ]
+	Running: ut_repyv2api_virtualnamespace-init.py              [ PASS ]
+	Running: ut_repyv2api_virtualnamespacecontextsafety.py      [ PASS ]
